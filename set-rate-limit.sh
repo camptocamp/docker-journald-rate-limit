@@ -39,4 +39,8 @@ if ! [ "$(pgrep -f $JOURNALD_PROCNAME | wc -l)" -gt 0 ]; then
       -e "/^RateLimitIntervalSec=.*/Id" \
       -e "/^RateLimitBurst=.*/Id" \
       "$JOURNALD_CONF"
+  exit 1
 fi
+
+echo "journald settings are set as follows:"
+egrep 'RateLimitIntervalSec|RateLimitBurst' "$JOURNALD_CONF"

@@ -17,12 +17,12 @@ test "$(pgrep -f $JOURNALD_PROCNAME | wc -l)" -eq 1 || \
   (echo "not exactly 1 process name matching '$JOURNALD_PROCNAME'"; exit 1)
 
 sed -r -i \
-    -e "s/.*#?(RateLimitIntervalSec=).*/\1$INTERVAL/i" \
+    -e "s/.*#?(RateLimitInterval=).*/\1$INTERVAL/i" \
     -e "s/.*#?(RateLimitBurst=).*/\1$BURST/i" \
     "$JOURNALD_CONF"
 
-if ! grep -qE '^RateLimitIntervalSec=' "$JOURNALD_CONF"; then
-  echo "RateLimitIntervalSec=$INTERVAL" >> "$JOURNALD_CONF"
+if ! grep -qE '^RateLimitInterval=' "$JOURNALD_CONF"; then
+  echo "RateLimitInterval=$INTERVAL" >> "$JOURNALD_CONF"
 fi
 
 if ! grep -qE '^RateLimitBurst=' "$JOURNALD_CONF"; then
@@ -36,11 +36,11 @@ sleep 5
 if ! [ "$(pgrep -f $JOURNALD_PROCNAME | wc -l)" -gt 0 ]; then
   echo "no journald process found, rolling back to built-in defaults"
   sed -r -i \
-      -e "/^RateLimitIntervalSec=.*/Id" \
+      -e "/^RateLimitInterval=.*/Id" \
       -e "/^RateLimitBurst=.*/Id" \
       "$JOURNALD_CONF"
   exit 1
 fi
 
 echo "journald settings are set as follows:"
-egrep 'RateLimitIntervalSec|RateLimitBurst' "$JOURNALD_CONF"
+egrep 'RateLimitInterval|RateLimitBurst' "$JOURNALD_CONF"
